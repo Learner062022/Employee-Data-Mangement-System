@@ -1,0 +1,115 @@
+CREATE TABLE IF NOT EXISTS employees (
+    first_name VARCHAR(10),
+    last_name VARCHAR(10),
+    annual_salary DECIMAL(8, 2) UNSIGNED,
+    address VARCHAR(100),
+    email VARCHAR(100) NOT NULL PRIMARY KEY,
+    work_phone CHAR(10),
+    personal_phone CHAR(10)
+);
+
+INSERT INTO employees VALUES 
+('Dylan', 'De Souza', 60000.00, '4 Somewhere', '12345678@tafe.wa.edu.au', '0401234567', '0412345678'),
+('Daniel', 'Johnston', 35000.00, '5 Somewhereanywhere', '23456789@tafe.wa.edu.au', '0423456789', '0434567890'),
+('Jordan', 'Clark', 10000.00, '6 Anywhere', '34567890@tafe.wa.edu.au', '0445678901', '0456789012'),
+('Michael', 'Stead', 45000.00, '7 Someplace', '45678901@tafe.wa.edu.au', '0467890123', '0478901234'),
+('Peter', 'Jolly', 405000.00, '8 Someplacesomewhere', '56789012@tafe.wa.edu.au', '0478901234', '0489012345');
+
+CREATE VIEW names_salaries AS 
+SELECT first_name, last_name, annual_salary 
+FROM employees;
+
+SELECT * FROM names_salaries 
+ORDER BY annual_salary DESC;
+
+SELECT first_name, last_name, annual_salary / 26 AS fortnightly_salary
+FROM names_salaries 
+ORDER BY last_name, first_name;
+
+SELECT SUM(annual_salary / 12) AS total_monthly_salary
+FROM names_salaries;
+
+SELECT first_name, last_name, annual_salary 
+FROM names_salaries 
+WHERE annual_salary = (SELECT MAX(annual_salary) FROM names_salaries);
+
+DELIMITER //
+CREATE PROCEDURE get_high_earning_employees (amount_earned DECIMAL(8, 2) UNSIGNED)
+BEGIN
+    SELECT first_name, last_name 
+    FROM employees 
+    WHERE annual_salary > amount_earned;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE salary_range (min_salary DECIMAL(8, 2) UNSIGNED, max_salary DECIMAL(8, 2) UNSIGNED)
+BEGIN
+    SELECT first_name, last_name 
+    FROM names_salaries 
+    WHERE annual_salary BETWEEN min_salary AND max_salary 
+    ORDER BY annual_salary ASC;
+END //
+DELIMITER ;
+
+CREATE TABLE IF NOT EXISTS game_skills (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    skill VARCHAR(15)
+);
+
+INSERT INTO game_skills (skill) VALUES
+('programming'),
+('3D modelling'),
+('sound effects'),
+('music'),
+('level design'),
+('play testing'),
+('team management');
+
+CREATE TABLE IF NOT EXISTS job_capabilities (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    game_skill_id INT UNSIGNED,
+    employee_email VARCHAR(100),
+    skill_rating TINYINT UNSIGNED
+);
+
+INSERT INTO job_capabilities (game_skill_id, employee_email, skill_rating) VALUES
+(1, '12345678@tafe.wa.edu.au', 2),
+(2, '23456789@tafe.wa.edu.au', 4),
+(3, '34567890@tafe.wa.edu.au', 6),
+(4, '45678901@tafe.wa.edu.au', 8),
+(5, '56789012@tafe.wa.edu.au', 10);
+
+SELECT first_name, last_name, skill_rating 
+FROM job_capabilities 
+INNER JOIN employees ON email = employee_email;
+
+CREATE VIEW IF NOT EXISTS names_salaries_skills_ranks AS
+SELECT first_name, last_name, annual_salary, skill, skill_rating 
+FROM job_capabilities
+INNER JOIN employees ON email = employee_email
+INNER JOIN game_skills ON game_skill_id = game_skills.id;
+
+SELECT * FROM names_salaries_skills_ranks;
+
+SELECT * FROM names_salaries_skills_ranks 
+WHERE annual_salary > 50000 
+ORDER BY annual_salary ASC;
+
+SELECT AVG(skill_rating) 
+FROM names_salaries_skills_ranks 
+WHERE skill = "programming";
+
+DELIMITER //
+CREATE PROCEDURE skill_salary_ratio (in_first_name VARCHAR(10), in_last_name VARCHAR(10))
+BEGIN
+    SELECT annual_salary / total_skill_rating AS salary_skill_ratio
+    FROM (
+        SELECT annual_salary, SUM(skill_rating) AS total_skill_rating
+        FROM names_salaries_skills_ranks 
+        WHERE first_name = in_first_name
+        AND last_name = in_last_name
+        GROUP BY annual_salary
+    ) AS employee_skills;
+END //
+DELIMITER ;
