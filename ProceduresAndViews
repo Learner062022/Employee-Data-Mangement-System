@@ -24,19 +24,15 @@ FROM employees;
 DELIMITER //
 CREATE PROCEDURE salary_queries()
 BEGIN
-    -- Displaying names and salaries sorted by salary in descending order
     SELECT * FROM names_salaries ORDER BY annual_salary DESC;
 
-    -- Calculating fortnightly salary and sorting by last name and first name
     SELECT first_name, last_name, annual_salary / 26 AS fortnightly_salary
     FROM names_salaries 
     ORDER BY last_name, first_name;
 
-    -- Calculating the total monthly salary bill
     SELECT SUM(annual_salary / 12) AS total_monthly_salary
     FROM names_salaries;
 
-    -- Displaying the name and salary of the highest-paid employee
     SELECT first_name, last_name, annual_salary 
     FROM names_salaries 
     WHERE annual_salary = (SELECT MAX(annual_salary) FROM names_salaries);
