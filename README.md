@@ -1,4 +1,4 @@
-# Employee and Management Database
+# EmployeeAndSkillManagementDatabase
 
 This repository contains SQL scripts for creating and managing a database to store employee data and their assosciated skills for a small game developement shop. The database supports various queries and stored procedures to facilitate operations and analytics.
 
