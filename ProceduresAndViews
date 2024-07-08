@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS employees (
     annual_salary DECIMAL(8, 2) UNSIGNED NOT NULL,
     address VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL PRIMARY KEY,
-    work_phone VARCHAR(15) NOT NULL,
-    personal_phone VARCHAR(15) NOT NULL 
+    work_phone VARCHAR(10) NOT NULL,
+    personal_phone VARCHAR(10) NOT NULL 
 );
 
 CREATE INDEX idx_annual_salary ON employees (annual_salary);
