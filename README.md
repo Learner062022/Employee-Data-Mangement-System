@@ -23,7 +23,7 @@ Included in the SQL scripts to populate the database for testing and demonstrati
     - Name
     - Salary
     - Skills
-    - Ranks they have in those skills.
+    - Skills' ranks.
 
 ## Procedures
   - **Salary Queries**: Provides various salary-related queries.
