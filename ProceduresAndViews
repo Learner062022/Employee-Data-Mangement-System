@@ -74,18 +74,18 @@ INSERT INTO game_skills (skill) VALUES
 ('team management');
 
 CREATE TABLE IF NOT EXISTS job_capabilities (                     
-    skill VARCHAR(15) NOT NULL,
-    employee_email VARCHAR(100) NOT NULL,
+    skill_ID VARCHAR(15) NOT NULL, 
+    employee_ID VARCHAR(100) NOT NULL, 
     skill_rating TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY (skill, employee_email),
-    FOREIGN KEY (skill) REFERENCES game_skills(skill),
-    FOREIGN KEY (employee_email) REFERENCES employees(email)
+    PRIMARY KEY (skill_ID, employee_ID), 
+    FOREIGN KEY (skill_ID) REFERENCES game_skills(skill), 
+    FOREIGN KEY (employee_ID) REFERENCES employees(email)
 );
 
-CREATE INDEX idx_job_capabilities_skill ON job_capabilities (skill);
-CREATE INDEX idx_job_capabilities_email ON job_capabilities (employee_email);
+CREATE INDEX idx_job_capabilities_skill ON job_capabilities (skill_ID);
+CREATE INDEX idx_job_capabilities_email ON job_capabilities (employee_ID);
 
-INSERT INTO job_capabilities (skill, employee_email, skill_rating) VALUES
+INSERT INTO job_capabilities (skill_ID, employee_ID, skill_rating) VALUES
 ('programming', '12345678@tafe.wa.edu.au', 2),
 ('3D modelling', '23456789@tafe.wa.edu.au', 4),
 ('sound effects', '34567890@tafe.wa.edu.au', 6),
@@ -94,12 +94,12 @@ INSERT INTO job_capabilities (skill, employee_email, skill_rating) VALUES
 
 SELECT first_name, last_name, skill_rating 
 FROM job_capabilities 
-INNER JOIN employees ON employees.email = job_capabilities.employee_email;
+INNER JOIN employees ON employees.email = job_capabilities.employee_ID;
 
 CREATE VIEW names_salaries_skills_ranks AS
-SELECT employees.first_name, employees.last_name, employees.annual_salary, job_capabilities.skill, job_capabilities.skill_rating 
+SELECT employees.first_name, employees.last_name, employees.annual_salary, job_capabilities.skill_ID, job_capabilities.skill_rating 
 FROM job_capabilities
-INNER JOIN employees ON employees.email = job_capabilities.employee_email;
+INNER JOIN employees ON employees.email = job_capabilities.employee_ID;
 
 SELECT * FROM names_salaries_skills_ranks;
 
@@ -109,7 +109,7 @@ ORDER BY annual_salary ASC;
 
 SELECT AVG(skill_rating) 
 FROM names_salaries_skills_ranks 
-WHERE skill = 'programming';
+WHERE skill_ID = 'programming';
 
 DELIMITER //
 CREATE PROCEDURE skill_salary_ratio (in_first_name VARCHAR(10), in_last_name VARCHAR(10))
